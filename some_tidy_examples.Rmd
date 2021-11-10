@@ -1,0 +1,70 @@
+## Tibbles
+
+```{r}
+    library(tibble)
+    df1 <- tibble(x = 1:3, y = letters[1:3])
+    attributes(df1)
+```
+Col recycling
+```{r}
+    # (dataframem)
+    data.frame(x = 1:4, y = 1:2)
+    # Error
+    #data.frame(x = 1:4, y = 1:3)
+
+    # Tibble Only recycles values of size one
+    tibble(x = 1:4, y = 1)
+
+    # Tibble complains when size ambiguous
+    #tibble(x = 1:4, y = 1:2)
+
+    # Reference variables during construction
+    tibble(
+      x = 1:3,
+      y = x * 2
+    )
+```
+
+Tibbles don't support row names
+```{r}
+    # Instead convert row names into a regular column
+    df3 <- data.frame(
+      age = c(35, 27, 18),
+      hair = c("blond", "brown", "black"),
+      row.names = c("Bob", "Susan", "Sam")
+    )
+    as_tibble(df3, rownames = "name")
+```
+
+## Modelling with `modelr` 
+
+Dependencies
+```{r}
+    library(tidyverse)
+    library(modelr)
+    options(na.action = na.warn)
+```
+    
+Generate grid for grid search and plot it
+```{r}
+    expand.grid(
+        a1 = seq(-5, 20, length = 25),
+        a2 = seq(1, 3, length = 25)
+    ) %>%
+    ggplot(data = ., aes(a1, a2)) +
+    geom_point(
+               size = 4
+    )
+```
+
+To see functional form of model use `model_matrix` 
+```{r}
+    # Create tibble row by row
+    df1 <- tribble(
+            ~y, ~x1, ~x2,
+            4,  2,  5,
+            5,  1,  6
+    )
+    model_matrix(df1, y ~ x1 + x2)
+```
+
